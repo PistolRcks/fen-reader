@@ -11,10 +11,6 @@ fn fen_to_str(fen : String) -> String {
         .map(|x: Captures| x.get(0).unwrap().as_str()) // Also map into string type
         .collect();
 
-    for sec in &sections {
-        dbg!(sec);
-    }
-
     // step 1: get boardstate
     for c in sections[0].chars() {
         if c == '/' {
