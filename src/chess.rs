@@ -60,8 +60,8 @@ impl ChessState {
         // step 0: regex to split the sections up
         let re : Regex = Regex::new(r"[\w/-]+").unwrap();
         // still not understanding the whole borrow thing, I guess it's due to being immutable?
-        let sections : Vec<&str> = re.captures_iter(&fen)
-            .map(|x: Captures| x.get(0).unwrap().as_str()) // Also map into string type
+        let sections : Vec<String> = re.captures_iter(&fen)
+            .map(|x: Captures| String::from(x.get(0).unwrap().as_str())) // Also map into string type
             .collect();
 
         // step 1: get boardstate
@@ -109,12 +109,11 @@ impl ChessState {
         if sections[3] == "-" {
             ep_target = Position{rank: 0, file: '_'}
         } else {
-            let mut chars = sections[3].chars();
-            println!("{:?}a", chars);
+            let chars: Vec<char> = sections[3].chars().collect();
             ep_target = Position{
                 // gotta figure out how unwraps work, this seems superfluous
-                rank: chars.nth(1).unwrap().to_digit(10).unwrap() as u8, 
-                file: chars.nth(0).unwrap()
+                rank: chars[1].to_digit(10).unwrap() as u8, 
+                file: chars[0]
             };
         }
 

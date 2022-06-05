@@ -24,15 +24,15 @@ fn state_to_str(b: &chess::ChessState) -> String {
 
 
     let out: String = format!("
-        {board}\n\n
-        Active Player: {active}\n
-        Castling Availability:\n{castling}
-        En Passant Target: {en_passant}\n
-        Halfmoves Since Last Pawnpush or Capture: {halfmoves}\n
-        No. of Fullmoves: {fullmoves}",
+{board}\n
+Active Player: {active}
+Castling Availability:\n{castling}
+En Passant Target: {en_passant}
+Halfmoves Since Last Pawnpush or Capture: {halfmoves}
+No. of Fullmoves: {fullmoves}",
         board=b.board,
         active=b.active_player,
-        castling=b.castling_avail,
+        castling=castle,
         en_passant=b.en_passant,
         halfmoves=b.halfmove_clock,
         fullmoves=b.fullmoves
