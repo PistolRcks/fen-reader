@@ -22,6 +22,13 @@ fn state_to_str(b: &chess::ChessState) -> String {
         castle += "\tNo castling available.\n";
     }
 
+    // check that en passant is possible
+    let en_passant: String; 
+    if b.en_passant.rank == 0 && b.en_passant.file == '_'  {
+        en_passant = String::from("No en passant possible.")
+    } else {
+        en_passant = format!("{}", b.en_passant)
+    }
 
     let out: String = format!("
 {board}\n
@@ -33,7 +40,7 @@ No. of Fullmoves: {fullmoves}",
         board=b.board,
         active=b.active_player,
         castling=castle,
-        en_passant=b.en_passant,
+        en_passant=en_passant,
         halfmoves=b.halfmove_clock,
         fullmoves=b.fullmoves
     );
