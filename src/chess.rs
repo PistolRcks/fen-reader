@@ -44,6 +44,7 @@ impl BitAnd<CastlingAvail> for u8 {
     type Output = u8;
 }
 
+
 pub struct ChessState {
     pub board: String,
     pub active_player: Player,
@@ -55,12 +56,12 @@ pub struct ChessState {
 
 impl ChessState {
     pub fn new(fen: &String) -> ChessState {
-        let mut new_board : String = String::new();
+        let mut new_board: String = String::new();
 
         // step 0: regex to split the sections up
-        let re : Regex = Regex::new(r"[\w/-]+").unwrap();
+        let re: Regex = Regex::new(r"[\w/-]+").unwrap();
         // still not understanding the whole borrow thing, I guess it's due to being immutable?
-        let sections : Vec<String> = re.captures_iter(&fen)
+        let sections: Vec<String> = re.captures_iter(&fen)
             .map(|x: Captures| String::from(x.get(0).unwrap().as_str())) // Also map into string type
             .collect();
 
@@ -130,5 +131,57 @@ impl ChessState {
             halfmove_clock: halfmove,
             fullmoves: fullmove
         }
+    }
+
+    // Format castling availability to look nicer
+    pub fn castling_to_str(&self) -> String {
+        let mut out: String = String::new();
+        
+        if self.castling_avail != 0 {
+            if self.castling_avail & CastlingAvail::WhiteKingside != 0 {
+                out += "White, Kingside; "; 
+            }
+            if self.castling_avail & CastlingAvail::WhiteQueenside != 0 {
+                out += "White, Queenside; ";
+            }
+            if self.castling_avail & CastlingAvail::BlackKingside != 0 {
+                out += "Black, Kingside; "; 
+            }
+            if self.castling_avail & CastlingAvail::BlackQueenside != 0 {
+                out += "Black, Queenside";
+            }
+        } else {
+            out += "None";
+        }
+
+        out
+    }
+}
+
+impl fmt::Display for ChessState {
+    // outputs a prettyprinted board and information from a ChessState object
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // check that en passant is possible
+        let en_passant: String; 
+        if self.en_passant.rank == 0 && self.en_passant.file == '_'  {
+            en_passant = String::from("No en passant possible.")
+        } else {
+            en_passant = format!("{}", self.en_passant)
+        }
+
+        write!(f, "
+{board}\n
+Active Player: {active}
+Castling Availability: {castling}
+En Passant Target: {en_passant}
+Halfmoves Since Last Pawnpush or Capture: {halfmoves}
+No. of Fullmoves: {fullmoves}",
+            board=self.board,
+            active=self.active_player,
+            castling=self.castling_to_str(),
+            en_passant=en_passant,
+            halfmoves=self.halfmove_clock,
+            fullmoves=self.fullmoves
+        )
     }
 }
